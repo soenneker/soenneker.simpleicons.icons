@@ -34,12 +34,19 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageIcon>icon.png</PackageIcon>
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+        <PackageReleaseNotes Condition="'$(PACKAGE_RELEASE_NOTES)' != ''">
+            $(PACKAGE_RELEASE_NOTES)
+        </PackageReleaseNotes>
+        <RepositoryCommit>$(GITHUB_SHA)</RepositoryCommit>
     </PropertyGroup>
 
     <ItemGroup>
         <None Include="..\..\README.md" Pack="true" PackagePath="\" />
         <None Include="..\..\LICENSE" Pack="true" PackagePath="\" />
         <None Include="..\..\icon.png" Pack="true" PackagePath="\" />
-        <!--<Content Include="Resources\ffmpeg.exe" Pack="true" PackageCopyToOutput="true" />-->
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="Resources\**\*.*" Pack="true" PackageCopyToOutput="true" PackagePath="contentFiles/any/any/Resources/%(RecursiveDir)" BuildAction="None" />
     </ItemGroup>
 </Project>
