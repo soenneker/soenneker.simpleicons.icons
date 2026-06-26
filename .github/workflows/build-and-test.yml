@@ -42,3 +42,30 @@ jobs:
 
       - name: Pack
         run: dotnet pack src/Soenneker.SimpleIcons.Icons/Soenneker.SimpleIcons.Icons.csproj --configuration Release --no-build --no-restore --output . --verbosity minimal
+
+      - name: Verify contentFiles metadata
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import re
+          import sys
+          import zipfile
+          from pathlib import Path
+
+          packages = sorted(Path(".").glob("*.nupkg"))
+          if len(packages) != 1:
+              sys.exit(f"Expected one .nupkg, found {len(packages)}")
+
+          with zipfile.ZipFile(packages[0]) as package:
+              nuspec_name = next((name for name in package.namelist() if name.endswith(".nuspec")), None)
+              if nuspec_name is None:
+                  sys.exit("Package does not contain a .nuspec")
+
+              nuspec = package.read(nuspec_name).decode("utf-8")
+
+          entries = len(re.findall(r"<files include=", nuspec))
+          expected = 'include="any/any/Resources/SimpleIcons/**"'
+
+          if entries != 1 or expected not in nuspec:
+              sys.exit(f"Expected one broad contentFiles include ({expected}); found {entries} entries")
+          PY
