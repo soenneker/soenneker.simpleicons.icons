@@ -117,7 +117,7 @@ jobs:
           PY
 
       - name: Log in to NuGet
-        uses: soenneker/nuget-resilient-login@v3
+        uses: soenneker/nuget-resilient-login@v5
         id: nuget-login
         with:
           user: soenneker
